@@ -20,8 +20,11 @@ class _MusicAppState extends State<MusicApp> {
   IconData btnIcon = Icons.play_arrow;
   double currentValue = 0.0;
   int currentIndex = 0;
+  String nextTrack = "";
   Color color = Colors.white;
   List<IconData> _icons = [Icons.repeat, Icons.repeat_on];
+
+  int songs = musicList.length;
 
   AudioPlayer _audioPlayer = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
   bool isPlaying = false;
@@ -82,8 +85,9 @@ class _MusicAppState extends State<MusicApp> {
         currentIndex--;
       }
     }
+    //print(currentSong[currentIndex]);
 
-    key.currentState!.playMusic(currentSong[currentIndex]);
+    key.currentState?.playMusic(currentSong[currentIndex]);
   }
 
   @override
@@ -149,9 +153,13 @@ class _MusicAppState extends State<MusicApp> {
                       onTap: () {
                         playMusic(musicList[index]["url"]);
                         setState(() {
+                          currentIndex = index;
                           currentTitle = musicList[index]["title"];
                           currentArtist = musicList[index]["artist"];
                           currentCover = musicList[index]["cover"];
+                          nextTrack = musicList[index + 1]["url"];
+                          print("Next track: " + nextTrack);
+                          print("current index: $currentIndex ");
                         });
                       },
                       child: ListTile(
@@ -334,7 +342,16 @@ class _MusicAppState extends State<MusicApp> {
                               color: Colors.white,
                             )),
                             onPressed: () {
-                              changeTrack(true);
+                              setState(() {
+                                changeTrack(true);
+                                playMusic(nextTrack);
+                                nextTrack = musicList[currentIndex + 1]["url"];
+                                currentTitle = musicList[currentIndex]["title"];
+                                currentArtist =
+                                    musicList[currentIndex]["artist"];
+                                currentCover = musicList[currentIndex]["cover"];
+                                print("Next Track: " + nextTrack);
+                              });
                             },
                           ),
                         ],
